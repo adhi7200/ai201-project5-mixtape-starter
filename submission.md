@@ -119,3 +119,7 @@ This is the flow that's supposed to produce a notification on both add-to-playli
 ## Regression test
 
 The regression test that would most clearly have caught this before it shipped is [`tests/test_feed.py::test_listen_from_yesterday_evening_does_not_appear_this_morning`](tests/test_feed.py). It freezes `datetime.now()` to two fixed timestamps eleven hours apart that straddle a real calendar-day boundary (Monday 11pm -> Tuesday 9am) and asserts the feed comes back empty. I checked it actually catches the original bug by stashing the fix and rerunning the test suite, it failed with the stale rolling-window logic (`assert [...] == []`, showing darius's yesterday-evening listen leaking through) and passed once the calendar-day cutoff was in place. A naive test comparing "yesterday" to "today" using `datetime.now()` directly wouldn't reliably catch a rolling-window vs calendar-day bug depending on what wall-clock time the suite happens to run at, which is why this test freezes both ends of the comparison to fixed timestamps instead.
+
+## Screenshot of `git log --oneline` command
+
+![Git CLI command for commit history](image.png)
